@@ -44,10 +44,11 @@ function filtersHtml(target) {
   const topics = uniq(poolFor(target).map(q=>q.topic)).sort();
   return `<div class="panel"><div class="grid">
     <div><label>Số câu luyện</label><select id="${target}-count"><option value="20">20 câu</option><option value="50" selected>50 câu</option><option value="100">100 câu</option><option value="all">Tất cả</option></select></div>
-  </div><label style="margin-top:10px">Chủ đề</label><div class="checks">${topics.map(t=>`<label class="chip"><input type="checkbox" class="${target}-topic" value="${esc(t)}" checked> ${esc(t)}</label>`).join('')}</div>
+  </div><div style="display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap"><label style="margin:0">Chủ đề</label><button type="button" class="btn" style="padding:4px 10px;font-size:12px" onclick="setAllTopics('${target}',true)">Chọn tất cả</button><button type="button" class="btn" style="padding:4px 10px;font-size:12px" onclick="setAllTopics('${target}',false)">Bỏ chọn tất cả</button></div><div class="checks">${topics.map(t=>`<label class="chip"><input type="checkbox" class="${target}-topic" value="${esc(t)}" checked> ${esc(t)}</label>`).join('')}</div>
   <div class="toolbar" style="margin-top:12px"><button class="btn primary" onclick="startQuiz('${target}')">Bắt đầu</button><button class="btn" onclick="resetAnswers()">Xóa kết quả</button></div><div class="progress"><div id="${target}-bar" class="bar"></div></div></div><div id="${target}-list"></div>`;
 }
 function selectedTopics(target){return [...document.querySelectorAll(`.${target}-topic:checked`)].map(x=>x.value);}
+function setAllTopics(target,checked){document.querySelectorAll(`.${target}-topic`).forEach(x=>{x.checked=checked;});}
 function startQuiz(target){
   let qs = poolFor(target).slice();
   const topics = selectedTopics(target);
