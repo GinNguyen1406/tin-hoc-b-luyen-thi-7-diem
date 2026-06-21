@@ -40,6 +40,8 @@ const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 function esc(s){return String(s ?? '').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 function uniq(a){return [...new Set(a)];}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function normText(s){return String(s||'').normalize('NFC').toLowerCase().replace(/[.,;:?!()\[\]"'`’“”…\-–—/\\]+/g,' ').replace(/\s+/g,' ').trim();}
+function dedupByText(qs){const seen=new Set();const out=[];for(const q of qs){const k=normText(q.question);if(k&&seen.has(k))continue;if(k)seen.add(k);out.push(q);}return out;}
 function isPdfNew(q){return q.origin !== 'html' && !q.sources.some(s=>s.type==='html');}
 function poolFor(target){return target==='all' ? DATA.questions.concat(DATA.examQuestions, DATA.reserveQuestions, DATA.rawReviewQuestions) : target==='reserve' ? DATA.reserveQuestions : target==='raw' ? DATA.rawReviewQuestions : target==='exam' ? DATA.examQuestions : target==='new' ? DATA.questions.filter(isPdfNew) : target==='visual' ? DATA.questions.filter(q=>q.visualQuestion) : DATA.questions;}
 function filtersHtml(target) {
@@ -56,6 +58,7 @@ function startQuiz(target){
   const topics = selectedTopics(target);
   qs = qs.filter(q=>topics.includes(q.topic));
   shuffle(qs);
+  qs = dedupByText(qs);
   const count = document.getElementById(`${target}-count`).value;
   if(count !== 'all') qs = qs.slice(0, Number(count));
   const state = getState(target);
@@ -159,7 +162,8 @@ function renderStats(){
 }
 function redoFrequentWrong(){
   const stats=loadStats(), idx=allQuestionsIndex();
-  let qs=Object.keys(stats).filter(id=>(stats[id].w||0)>0).sort((a,b)=>(stats[b].w||0)-(stats[a].w||0)).map(id=>idx[id]).filter(Boolean).slice(0,50);
+  let qs=Object.keys(stats).filter(id=>(stats[id].w||0)>0).sort((a,b)=>(stats[b].w||0)-(stats[a].w||0)).map(id=>idx[id]).filter(Boolean);
+  qs=dedupByText(qs).slice(0,50);
   if(!qs.length){ alert('Chưa có câu sai nào được ghi nhận.'); return; }
   shuffle(qs); const state=getState('all'); state.questions=qs; state.answers={}; state.results={};
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active', b.dataset.tab==='all'));
