@@ -9,7 +9,7 @@
 </style>
 </head>
 <body>
-<header class="top" style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap"><div><h1>Luyện thi Tin học B - mục tiêu 7 điểm</h1><p>187 câu chính + 89 câu bổ sung + 16 câu OCR mở rộng + 482 lượt câu theo PDF.</p></div><div style="font-weight:800;font-size:18px;white-space:nowrap;text-shadow:0 1px 4px rgba(0,0,0,.28)">Good luck to TH 🍀</div></header>
+<header class="top" style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap"><div><h1>Luyện thi Tin học B - mục tiêu 7 điểm</h1><p id="subhead"></p></div><div style="font-weight:800;font-size:18px;white-space:nowrap;text-shadow:0 1px 4px rgba(0,0,0,.28)">Good luck to TH 🍀</div></header>
 <main class="wrap">
   <div class="tabs">
     <button class="tab active" data-tab="all">Tất cả</button>
@@ -202,6 +202,7 @@ DATA.reserveQuestions.forEach((q,i)=>q.id='r'+(i+1));
 DATA.rawReviewQuestions.forEach((q,i)=>q.id='x'+(i+1));
 DATA.examQuestions.forEach((q,i)=>q.id='e'+(i+1));
 renderAll(); renderQuiz(); renderNew(); renderExam(); renderVisual(); renderReserve(); renderRaw(); renderGuide(); renderStats();
+(function(){var sh=document.getElementById('subhead');if(!sh)return;var pool=poolFor('all');var total=pool.length;var uniq=dedupByText(pool).length;sh.innerHTML='<b>'+uniq+' câu khác nhau</b> · luyện không trùng lặp. Nguồn: '+DATA.questions.length+' câu chính · '+DATA.reserveQuestions.length+' bổ sung · '+DATA.rawReviewQuestions.length+' OCR mở rộng · '+DATA.examQuestions.length+' lượt theo đề PDF (tổng '+total+' lượt).';})();
 </script>
 </body>
 </html>
